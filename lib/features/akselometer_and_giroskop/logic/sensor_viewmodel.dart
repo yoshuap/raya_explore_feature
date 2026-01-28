@@ -168,7 +168,6 @@ class SensorViewModel extends BaseViewModel {
     _subscriptions.add(
       _repository.proximityEvents.listen(
         (event) {
-          print('event.bitLength: ${event.bitLength}');
           _proximityEvent = event;
           _isProximityAvailable = true;
           notifyListeners();

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -8,8 +10,10 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -23,7 +27,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     environmentSensors.pressure.listen((pressure) {
-      print(pressure.toString());
+      log('pressure: $pressure');
     });
     initPlatformState();
   }
@@ -36,13 +40,13 @@ class _MyAppState extends State<MyApp> {
     bool pressureAvailable;
 
     tempAvailable = await environmentSensors
-        .getSensorAvailable(SensorType.AmbientTemperature);
+        .getSensorAvailable(SensorType.ambientTemperature);
     humidityAvailable =
-        await environmentSensors.getSensorAvailable(SensorType.Humidity);
+        await environmentSensors.getSensorAvailable(SensorType.humidity);
     lightAvailable =
-        await environmentSensors.getSensorAvailable(SensorType.Light);
+        await environmentSensors.getSensorAvailable(SensorType.light);
     pressureAvailable =
-        await environmentSensors.getSensorAvailable(SensorType.Pressure);
+        await environmentSensors.getSensorAvailable(SensorType.pressure);
 
     setState(() {
       _tempAvailable = tempAvailable;

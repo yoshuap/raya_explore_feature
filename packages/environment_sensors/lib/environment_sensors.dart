@@ -37,58 +37,54 @@ class EnvironmentSensors {
 
   ///Check for the availability of device sensor by sensor type.
   Future<bool> getSensorAvailable(SensorType sensorType) async {
-    if (sensorType == SensorType.AmbientTemperature)
+    if (sensorType == SensorType.ambientTemperature) {
       return await _methodChannel.invokeMethod('isSensorAvailable', 13);
-    if (sensorType == SensorType.Humidity)
+    }
+    if (sensorType == SensorType.humidity) {
       return await _methodChannel.invokeMethod('isSensorAvailable', 12);
-    if (sensorType == SensorType.Light)
+    }
+    if (sensorType == SensorType.light) {
       return await _methodChannel.invokeMethod('isSensorAvailable', 5);
-    if (sensorType == SensorType.Pressure)
+    }
+    if (sensorType == SensorType.pressure) {
       return await _methodChannel.invokeMethod('isSensorAvailable', 6);
+    }
 
     return false;
   }
 
   ///Gets the ambient temperature reading from device sensor, if present
   Stream<double> get temperature {
-    if (_temperatureEvents == null) {
-      _temperatureEvents = _temperatureEventChannel
-          .receiveBroadcastStream()
-          .map((event) => double.parse(event.toString()));
-    }
+    _temperatureEvents ??= _temperatureEventChannel
+        .receiveBroadcastStream()
+        .map((event) => double.parse(event.toString()));
     return _temperatureEvents!;
   }
 
   ///Gets the relative humidity reading from device sensor, if present
   Stream<double> get humidity {
-    if (_humidityEvents == null) {
-      _humidityEvents = _humidityEventChannel
-          .receiveBroadcastStream()
-          .map((event) => double.parse(event.toString()));
-    }
+    _humidityEvents ??= _humidityEventChannel
+        .receiveBroadcastStream()
+        .map((event) => double.parse(event.toString()));
     return _humidityEvents!;
   }
 
   ///Gets the ambient light reading from device sensor, if present
   Stream<double> get light {
-    if (_lightEvents == null) {
-      _lightEvents = _lightEventChannel
-          .receiveBroadcastStream()
-          .map((event) => double.parse(event.toString()));
-    }
+    _lightEvents ??= _lightEventChannel
+        .receiveBroadcastStream()
+        .map((event) => double.parse(event.toString()));
     return _lightEvents!;
   }
 
   ///Gets the pressure reading from device sensor, if present
   Stream<double> get pressure {
-    if (_pressureEvents == null) {
-      _pressureEvents = _pressureEventChannel
-          .receiveBroadcastStream()
-          .map((event) => double.parse(event.toString()));
-    }
+    _pressureEvents ??= _pressureEventChannel
+        .receiveBroadcastStream()
+        .map((event) => double.parse(event.toString()));
     return _pressureEvents!;
   }
 }
 
 ///An enum for defining device types when checking for sensor availability
-enum SensorType { AmbientTemperature, Humidity, Light, Pressure }
+enum SensorType { ambientTemperature, humidity, light, pressure }
