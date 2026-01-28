@@ -8,8 +8,10 @@ Add the following dependencies to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sensors_plus: ^6.1.0 # Check for latest version
-  stacked: ^3.4.0
+  sensors_plus: ^7.0.0
+  environment_sensors: ^0.3.0
+  proximity_sensor: ^1.3.9
+  stacked: ^3.5.0
 ```
 
 ## 2. Platform Setup
@@ -24,6 +26,7 @@ Add the `NSMotionUsageDescription` key to `ios/Runner/Info.plist` to request per
 
 ### Android
 Typically, `sensors_plus` does not require specific permissions for standard sensors (accelerometer, gyroscope, magnetometer) in `AndroidManifest.xml`.
+However, `environment_sensors` and `proximity_sensor` might require hardware features to be present.
 
 ## 3. Architecture
 
@@ -36,6 +39,10 @@ The `SensorRepository` acts as a data source abstraction. It provides streams fo
 - `gyroscopeEvents`: Rotation rate.
 - `magnetometerEvents`: Magnetic field.
 - `barometerEvents`: Atmospheric pressure.
+- `temperatureEvents`: Ambient temperature (°C).
+- `humidityEvents`: Relative humidity (%).
+- `lightEvents`: Ambient light level (Lux).
+- `proximityEvents`: Distance or binary near/far (cm).
 
 ### Layer 2: State Management (`sensor_viewmodel.dart`)
 - **ViewModel (`SensorViewModel`)**: 
@@ -43,8 +50,9 @@ The `SensorRepository` acts as a data source abstraction. It provides streams fo
     - Injects `SensorRepository`.
     - Subscribes to all sensor streams on initialization.
     - Exposes getters for each sensor event type.
+    - Tracks availability status for each sensor.
     - Calls `notifyListeners()` when a new event is received to rebuild the UI.
-    - Dispsoes subscriptions in `dispose()`.
+    - Disposes subscriptions in `dispose()`.
 
 ### Layer 3: UI (`view.dart`)
 The UI uses `ViewModelBuilder.reactive` to bind the `SensorViewModel` to the View.

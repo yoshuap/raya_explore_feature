@@ -16,6 +16,13 @@ subprojects {
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 subprojects {
+    afterEvaluate {
+        project.extensions.findByType(org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension::class.java)?.let {
+            it.jvmToolchain(17)
+        }
+    }
+}
+subprojects {
     project.evaluationDependsOn(":app")
 }
 

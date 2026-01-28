@@ -27,6 +27,14 @@ void main() {
     when(
       () => mockRepository.barometerEvents,
     ).thenAnswer((_) => Stream.empty());
+    when(
+      () => mockRepository.temperatureEvents,
+    ).thenAnswer((_) => Stream.empty());
+    when(() => mockRepository.humidityEvents).thenAnswer((_) => Stream.empty());
+    when(() => mockRepository.lightEvents).thenAnswer((_) => Stream.empty());
+    when(
+      () => mockRepository.proximityEvents,
+    ).thenAnswer((_) => Stream.empty());
   });
 
   group('SensorViewModel', () {
@@ -37,6 +45,10 @@ void main() {
       expect(viewModel.gyroscopeEvent, isNull);
       expect(viewModel.magnetometerEvent, isNull);
       expect(viewModel.barometerEvent, isNull);
+      expect(viewModel.temperatureEvent, isNull);
+      expect(viewModel.humidityEvent, isNull);
+      expect(viewModel.lightEvent, isNull);
+      expect(viewModel.proximityEvent, isNull);
     });
 
     test(
@@ -101,6 +113,54 @@ void main() {
       await Future.delayed(Duration.zero);
 
       expect(viewModel.barometerEvent, equals(event));
+    });
+
+    test('updates temperatureEvent when repository emits event', () async {
+      const event = 25.0;
+      when(
+        () => mockRepository.temperatureEvents,
+      ).thenAnswer((_) => Stream.value(event));
+
+      final viewModel = SensorViewModel(mockRepository);
+      await Future.delayed(Duration.zero);
+
+      expect(viewModel.temperatureEvent, equals(event));
+    });
+
+    test('updates humidityEvent when repository emits event', () async {
+      const event = 50.0;
+      when(
+        () => mockRepository.humidityEvents,
+      ).thenAnswer((_) => Stream.value(event));
+
+      final viewModel = SensorViewModel(mockRepository);
+      await Future.delayed(Duration.zero);
+
+      expect(viewModel.humidityEvent, equals(event));
+    });
+
+    test('updates lightEvent when repository emits event', () async {
+      const event = 100.0;
+      when(
+        () => mockRepository.lightEvents,
+      ).thenAnswer((_) => Stream.value(event));
+
+      final viewModel = SensorViewModel(mockRepository);
+      await Future.delayed(Duration.zero);
+
+      expect(viewModel.lightEvent, equals(event));
+    });
+
+    test('updates proximityEvent when repository emits event', () async {
+      const event = 1;
+      when(
+        () => mockRepository.proximityEvents,
+      ).thenAnswer((_) => Stream.value(event));
+
+      final viewModel = SensorViewModel(mockRepository);
+      await Future.delayed(Duration.zero);
+
+      expect(viewModel.proximityEvent, equals(event));
     });
 
     test(

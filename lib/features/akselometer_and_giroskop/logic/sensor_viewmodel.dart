@@ -11,24 +11,40 @@ class SensorViewModel extends BaseViewModel {
   GyroscopeEvent? _gyroscopeEvent;
   MagnetometerEvent? _magnetometerEvent;
   BarometerEvent? _barometerEvent;
+  double? _temperatureEvent;
+  double? _humidityEvent;
+  double? _lightEvent;
+  int? _proximityEvent;
 
   bool _isUserAccelerometerAvailable = true;
   bool _isAccelerometerAvailable = true;
   bool _isGyroscopeAvailable = true;
   bool _isMagnetometerAvailable = true;
   bool _isBarometerAvailable = true;
+  bool _isTemperatureAvailable = true;
+  bool _isHumidityAvailable = true;
+  bool _isLightAvailable = true;
+  bool _isProximityAvailable = true;
 
   UserAccelerometerEvent? get userAccelerometerEvent => _userAccelerometerEvent;
   AccelerometerEvent? get accelerometerEvent => _accelerometerEvent;
   GyroscopeEvent? get gyroscopeEvent => _gyroscopeEvent;
   MagnetometerEvent? get magnetometerEvent => _magnetometerEvent;
   BarometerEvent? get barometerEvent => _barometerEvent;
+  double? get temperatureEvent => _temperatureEvent;
+  double? get humidityEvent => _humidityEvent;
+  double? get lightEvent => _lightEvent;
+  int? get proximityEvent => _proximityEvent;
 
   bool get isUserAccelerometerAvailable => _isUserAccelerometerAvailable;
   bool get isAccelerometerAvailable => _isAccelerometerAvailable;
   bool get isGyroscopeAvailable => _isGyroscopeAvailable;
   bool get isMagnetometerAvailable => _isMagnetometerAvailable;
   bool get isBarometerAvailable => _isBarometerAvailable;
+  bool get isTemperatureAvailable => _isTemperatureAvailable;
+  bool get isHumidityAvailable => _isHumidityAvailable;
+  bool get isLightAvailable => _isLightAvailable;
+  bool get isProximityAvailable => _isProximityAvailable;
 
   final List<StreamSubscription> _subscriptions = [];
 
@@ -102,6 +118,63 @@ class SensorViewModel extends BaseViewModel {
         },
         onError: (error) {
           _isBarometerAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
+    );
+    _subscriptions.add(
+      _repository.temperatureEvents.listen(
+        (event) {
+          _temperatureEvent = event;
+          _isTemperatureAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isTemperatureAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
+    );
+    _subscriptions.add(
+      _repository.humidityEvents.listen(
+        (event) {
+          _humidityEvent = event;
+          _isHumidityAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isHumidityAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
+    );
+    _subscriptions.add(
+      _repository.lightEvents.listen(
+        (event) {
+          _lightEvent = event;
+          _isLightAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isLightAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
+    );
+    _subscriptions.add(
+      _repository.proximityEvents.listen(
+        (event) {
+          print('event.bitLength: ${event.bitLength}');
+          _proximityEvent = event;
+          _isProximityAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isProximityAvailable = false;
           notifyListeners();
         },
         cancelOnError: true,

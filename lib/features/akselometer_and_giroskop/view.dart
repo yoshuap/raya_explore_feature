@@ -62,6 +62,36 @@ class AkselometerAndGiroskop extends StatelessWidget {
                     : 'No data',
                 isAvailable: viewModel.isBarometerAvailable,
               ),
+              _buildSensorCard(
+                'Ambient Temperature',
+                viewModel.temperatureEvent != null
+                    ? '${viewModel.temperatureEvent!.toStringAsFixed(2)} °C'
+                    : 'No data',
+                isAvailable: viewModel.isTemperatureAvailable,
+              ),
+              _buildSensorCard(
+                'Proximity',
+                viewModel.proximityEvent != null
+                    ? viewModel.proximityEvent == 0
+                          ? "Near"
+                          : "Far"
+                    : 'No data',
+                isAvailable: viewModel.isProximityAvailable,
+              ),
+              _buildSensorCard(
+                'Light',
+                viewModel.lightEvent != null
+                    ? '${viewModel.lightEvent!.toStringAsFixed(2)} Lux'
+                    : 'No data',
+                isAvailable: viewModel.isLightAvailable,
+              ),
+              _buildSensorCard(
+                'Relative Humidity',
+                viewModel.humidityEvent != null
+                    ? '${viewModel.humidityEvent!.toStringAsFixed(2)} %'
+                    : 'No data',
+                isAvailable: viewModel.isHumidityAvailable,
+              ),
             ],
           ),
         );
