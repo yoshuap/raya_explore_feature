@@ -12,11 +12,23 @@ class SensorViewModel extends BaseViewModel {
   MagnetometerEvent? _magnetometerEvent;
   BarometerEvent? _barometerEvent;
 
+  bool _isUserAccelerometerAvailable = true;
+  bool _isAccelerometerAvailable = true;
+  bool _isGyroscopeAvailable = true;
+  bool _isMagnetometerAvailable = true;
+  bool _isBarometerAvailable = true;
+
   UserAccelerometerEvent? get userAccelerometerEvent => _userAccelerometerEvent;
   AccelerometerEvent? get accelerometerEvent => _accelerometerEvent;
   GyroscopeEvent? get gyroscopeEvent => _gyroscopeEvent;
   MagnetometerEvent? get magnetometerEvent => _magnetometerEvent;
   BarometerEvent? get barometerEvent => _barometerEvent;
+
+  bool get isUserAccelerometerAvailable => _isUserAccelerometerAvailable;
+  bool get isAccelerometerAvailable => _isAccelerometerAvailable;
+  bool get isGyroscopeAvailable => _isGyroscopeAvailable;
+  bool get isMagnetometerAvailable => _isMagnetometerAvailable;
+  bool get isBarometerAvailable => _isBarometerAvailable;
 
   final List<StreamSubscription> _subscriptions = [];
 
@@ -26,34 +38,74 @@ class SensorViewModel extends BaseViewModel {
 
   void _initSensors() {
     _subscriptions.add(
-      _repository.userAccelerometerEvents.listen((event) {
-        _userAccelerometerEvent = event;
-        notifyListeners();
-      }),
+      _repository.userAccelerometerEvents.listen(
+        (event) {
+          _userAccelerometerEvent = event;
+          _isUserAccelerometerAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isUserAccelerometerAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
     );
     _subscriptions.add(
-      _repository.accelerometerEvents.listen((event) {
-        _accelerometerEvent = event;
-        notifyListeners();
-      }),
+      _repository.accelerometerEvents.listen(
+        (event) {
+          _accelerometerEvent = event;
+          _isAccelerometerAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isAccelerometerAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
     );
     _subscriptions.add(
-      _repository.gyroscopeEvents.listen((event) {
-        _gyroscopeEvent = event;
-        notifyListeners();
-      }),
+      _repository.gyroscopeEvents.listen(
+        (event) {
+          _gyroscopeEvent = event;
+          _isGyroscopeAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isGyroscopeAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
     );
     _subscriptions.add(
-      _repository.magnetometerEvents.listen((event) {
-        _magnetometerEvent = event;
-        notifyListeners();
-      }),
+      _repository.magnetometerEvents.listen(
+        (event) {
+          _magnetometerEvent = event;
+          _isMagnetometerAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isMagnetometerAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
     );
     _subscriptions.add(
-      _repository.barometerEvents.listen((event) {
-        _barometerEvent = event;
-        notifyListeners();
-      }),
+      _repository.barometerEvents.listen(
+        (event) {
+          _barometerEvent = event;
+          _isBarometerAvailable = true;
+          notifyListeners();
+        },
+        onError: (error) {
+          _isBarometerAvailable = false;
+          notifyListeners();
+        },
+        cancelOnError: true,
+      ),
     );
   }
 

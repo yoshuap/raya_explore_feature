@@ -26,6 +26,7 @@ class AkselometerAndGiroskop extends StatelessWidget {
                           'Y: ${viewModel.userAccelerometerEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.userAccelerometerEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
+                isAvailable: viewModel.isUserAccelerometerAvailable,
               ),
               _buildSensorCard(
                 'Accelerometer',
@@ -34,6 +35,7 @@ class AkselometerAndGiroskop extends StatelessWidget {
                           'Y: ${viewModel.accelerometerEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.accelerometerEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
+                isAvailable: viewModel.isAccelerometerAvailable,
               ),
               _buildSensorCard(
                 'Gyroscope',
@@ -42,6 +44,7 @@ class AkselometerAndGiroskop extends StatelessWidget {
                           'Y: ${viewModel.gyroscopeEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.gyroscopeEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
+                isAvailable: viewModel.isGyroscopeAvailable,
               ),
               _buildSensorCard(
                 'Magnetometer',
@@ -50,12 +53,14 @@ class AkselometerAndGiroskop extends StatelessWidget {
                           'Y: ${viewModel.magnetometerEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.magnetometerEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
+                isAvailable: viewModel.isMagnetometerAvailable,
               ),
               _buildSensorCard(
                 'Barometer',
                 viewModel.barometerEvent != null
                     ? 'Pressure: ${viewModel.barometerEvent!.pressure.toStringAsFixed(2)} hPa'
                     : 'No data',
+                isAvailable: viewModel.isBarometerAvailable,
               ),
             ],
           ),
@@ -64,21 +69,42 @@ class AkselometerAndGiroskop extends StatelessWidget {
     );
   }
 
-  Widget _buildSensorCard(String title, String data) {
+  Widget _buildSensorCard(
+    String title,
+    String data, {
+    bool isAvailable = true,
+  }) {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.only(bottom: 16),
+      color: isAvailable ? null : Colors.grey[200],
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                if (!isAvailable) const Icon(Icons.error, color: Colors.red),
+              ],
             ),
             const SizedBox(height: 8),
-            Text(data, style: const TextStyle(fontSize: 14)),
+            Text(
+              isAvailable ? data : 'Sensor not supported',
+              style: TextStyle(
+                fontSize: 14,
+                color: isAvailable ? Colors.black : Colors.red,
+                fontStyle: isAvailable ? FontStyle.normal : FontStyle.italic,
+              ),
+            ),
           ],
         ),
       ),

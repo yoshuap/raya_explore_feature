@@ -102,5 +102,19 @@ void main() {
 
       expect(viewModel.barometerEvent, equals(event));
     });
+
+    test(
+      'sets availability to false when repository stream emits error',
+      () async {
+        when(
+          () => mockRepository.userAccelerometerEvents,
+        ).thenAnswer((_) => Stream.error(Exception('Sensor not supported')));
+
+        final viewModel = SensorViewModel(mockRepository);
+        await Future.delayed(Duration.zero);
+
+        expect(viewModel.isUserAccelerometerAvailable, isFalse);
+      },
+    );
   });
 }
