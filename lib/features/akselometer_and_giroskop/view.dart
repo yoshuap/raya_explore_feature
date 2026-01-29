@@ -156,40 +156,12 @@ class AkselometerAndGiroskop extends StatelessWidget {
                   children: [
                     if (!isAvailable)
                       const Icon(Icons.error, color: Colors.red),
-                    GestureDetector(
+                    Tooltip(
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      message: textGuide,
+                      triggerMode: TooltipTriggerMode.tap,
                       child: const Icon(Icons.info),
-                      onTap: () {
-                        // show information about sensor, and usecase guide to test sensor
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Sensor Information'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(data),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'Use case guide to test sensor: $textGuide',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
                     ),
                   ],
                 ),
