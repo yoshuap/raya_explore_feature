@@ -20,77 +20,104 @@ class AkselometerAndGiroskop extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             children: [
               _buildSensorCard(
-                'User Accelerometer',
-                viewModel.userAccelerometerEvent != null
+                context,
+                title: 'User Accelerometer',
+                data: viewModel.userAccelerometerEvent != null
                     ? 'X: ${viewModel.userAccelerometerEvent!.x.toStringAsFixed(2)}\n'
                           'Y: ${viewModel.userAccelerometerEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.userAccelerometerEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
                 isAvailable: viewModel.isUserAccelerometerAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Accelerometer',
-                viewModel.accelerometerEvent != null
+                context,
+                title: 'Accelerometer',
+                data: viewModel.accelerometerEvent != null
                     ? 'X: ${viewModel.accelerometerEvent!.x.toStringAsFixed(2)}\n'
                           'Y: ${viewModel.accelerometerEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.accelerometerEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
                 isAvailable: viewModel.isAccelerometerAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Gyroscope',
-                viewModel.gyroscopeEvent != null
+                context,
+                title: 'Gyroscope',
+                data: viewModel.gyroscopeEvent != null
                     ? 'X: ${viewModel.gyroscopeEvent!.x.toStringAsFixed(2)}\n'
                           'Y: ${viewModel.gyroscopeEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.gyroscopeEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
                 isAvailable: viewModel.isGyroscopeAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Magnetometer',
-                viewModel.magnetometerEvent != null
+                context,
+                title: 'Magnetometer',
+                data: viewModel.magnetometerEvent != null
                     ? 'X: ${viewModel.magnetometerEvent!.x.toStringAsFixed(2)}\n'
                           'Y: ${viewModel.magnetometerEvent!.y.toStringAsFixed(2)}\n'
                           'Z: ${viewModel.magnetometerEvent!.z.toStringAsFixed(2)}'
                     : 'No data',
                 isAvailable: viewModel.isMagnetometerAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Barometer',
-                viewModel.barometerEvent != null
+                context,
+                title: 'Barometer',
+                data: viewModel.barometerEvent != null
                     ? 'Pressure: ${viewModel.barometerEvent!.pressure.toStringAsFixed(2)} hPa'
                     : 'No data',
                 isAvailable: viewModel.isBarometerAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Ambient Temperature',
-                viewModel.temperatureEvent != null
+                context,
+                title: 'Ambient Temperature',
+                data: viewModel.temperatureEvent != null
                     ? '${viewModel.temperatureEvent!.toStringAsFixed(2)} °C'
                     : 'No data',
                 isAvailable: viewModel.isTemperatureAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Proximity',
-                viewModel.proximityEvent != null
+                context,
+                title: 'Proximity',
+                data: viewModel.proximityEvent != null
                     ? viewModel.proximityEvent == 0
                           ? "Near"
                           : "Far"
                     : 'No data',
                 isAvailable: viewModel.isProximityAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Light',
-                viewModel.lightEvent != null
+                context,
+                title: 'Light',
+                data: viewModel.lightEvent != null
                     ? '${viewModel.lightEvent!.toStringAsFixed(2)} Lux'
                     : 'No data',
                 isAvailable: viewModel.isLightAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
               _buildSensorCard(
-                'Relative Humidity',
-                viewModel.humidityEvent != null
+                context,
+                title: 'Relative Humidity',
+                data: viewModel.humidityEvent != null
                     ? '${viewModel.humidityEvent!.toStringAsFixed(2)} %'
                     : 'No data',
                 isAvailable: viewModel.isHumidityAvailable,
+                textGuide:
+                    'Hold the device still and move it around to see the values change.',
               ),
             ],
           ),
@@ -100,9 +127,11 @@ class AkselometerAndGiroskop extends StatelessWidget {
   }
 
   Widget _buildSensorCard(
-    String title,
-    String data, {
+    BuildContext context, {
+    required String title,
+    required String data,
     bool isAvailable = true,
+    required String textGuide,
   }) {
     return Card(
       elevation: 4,
@@ -123,7 +152,47 @@ class AkselometerAndGiroskop extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                if (!isAvailable) const Icon(Icons.error, color: Colors.red),
+                Row(
+                  children: [
+                    if (!isAvailable)
+                      const Icon(Icons.error, color: Colors.red),
+                    GestureDetector(
+                      child: const Icon(Icons.info),
+                      onTap: () {
+                        // show information about sensor, and usecase guide to test sensor
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Sensor Information'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(data),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Use case guide to test sensor: $textGuide',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 8),
