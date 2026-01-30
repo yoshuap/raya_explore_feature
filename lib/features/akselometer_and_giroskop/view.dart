@@ -92,8 +92,8 @@ class AkselometerAndGiroskop extends StatelessWidget {
                 title: 'Proximity',
                 data: viewModel.proximityEvent != null
                     ? viewModel.proximityEvent == 0
-                          ? "Near"
-                          : "Far"
+                          ? "Far"
+                          : "Near"
                     : 'No data',
                 isAvailable: viewModel.isProximityAvailable,
                 textGuide:
