@@ -1,6 +1,6 @@
 # Sensors Implementation Documentation
 
-This document describes the step-by-step implementation of the sensors feature using `sensors_plus` and **`stacked`**.
+This document describes the step-by-step implementation of the sensors feature using `sensors_plus`, `environment_sensors`, `proximity_sensor`, and **`stacked`**.
 
 ## 1. Dependencies
 
@@ -17,7 +17,7 @@ dependencies:
 ## 2. Platform Setup
 
 ### iOS
-Add the `NSMotionUsageDescription` key to `ios/Runner/Info.plist` to request permission to access motion sensors.
+Add the `NSMotionUsageDescription` key to `ios/Runner/Info.plist`.
 
 ```xml
 <key>NSMotionUsageDescription</key>
@@ -25,61 +25,63 @@ Add the `NSMotionUsageDescription` key to `ios/Runner/Info.plist` to request per
 ```
 
 ### Android
-Typically, `sensors_plus` does not require specific permissions for standard sensors (accelerometer, gyroscope, magnetometer) in `AndroidManifest.xml`.
-However, `environment_sensors` and `proximity_sensor` might require hardware features to be present.
+Standard motion sensors usually don't require permissions. However, ensure `minSdkVersion` is compatible with the plugins (typically 21+).
 
 ## 3. Architecture
 
-We follow a clean architecture approach using **Repository** pattern and **Stacked (MVVM)** for state management.
+We follow a clean architecture approach using the **Repository** pattern and **Stacked (MVVM)** for state management.
 
 ### Layer 1: Repository (`sensor_repository.dart`)
-The `SensorRepository` acts as a data source abstraction. It provides streams for all available sensors.
-- `userAccelerometerEvents`: Acceleration without gravity.
-- `accelerometerEvents`: Raw acceleration including gravity.
-- `gyroscopeEvents`: Rotation rate.
-- `magnetometerEvents`: Magnetic field.
-- `barometerEvents`: Atmospheric pressure.
-- `temperatureEvents`: Ambient temperature (°C).
-- `humidityEvents`: Relative humidity (%).
-- `lightEvents`: Ambient light level (Lux).
-- `proximityEvents`: Distance or binary near/far (cm).
+The `SensorRepository` acts as a data source abstraction, wrapping three different plugins:
+- **`sensors_plus`**: Provides motion and position sensors.
+- **`environment_sensors`**: Provides ambient environment data.
+- **`proximity_sensor`**: Provides device proximity data.
+
+| Sensor | Plugin | Unit |
+| :--- | :--- | :--- |
+| User Accelerometer | `sensors_plus` | m/s² |
+| Accelerometer | `sensors_plus` | m/s² |
+| Gyroscope | `sensors_plus` | rad/s |
+| Magnetometer | `sensors_plus` | μT |
+| Barometer | `sensors_plus` | hPa |
+| Temperature | `environment_sensors` | °C |
+| Humidity | `environment_sensors` | % |
+| Light | `environment_sensors` | Lux |
+| Proximity | `proximity_sensor` | Near (1) / Far (0) |
 
 ### Layer 2: State Management (`sensor_viewmodel.dart`)
-- **ViewModel (`SensorViewModel`)**: 
-    - Extends `BaseViewModel`.
-    - Injects `SensorRepository`.
-    - Subscribes to all sensor streams on initialization.
-    - Exposes getters for each sensor event type.
-    - Tracks availability status for each sensor.
-    - Calls `notifyListeners()` when a new event is received to rebuild the UI.
-    - Disposes subscriptions in `dispose()`.
+The `SensorViewModel` manages sensor subscriptions and availability state:
+- **Availability Flags**: Booleans like `is[Sensor]Available` track if a sensor is supported by the hardware.
+- **Error Handling**: Uses `.listen(..., onError: ...)` to catch sensor initialization failures and update availability flags.
+- **Reactivity**: Calls `notifyListeners()` on every event to update the UI efficiently.
+- **Cleanup**: Cancels all `StreamSubscription` objects in `dispose()` to prevent memory leaks.
 
 ### Layer 3: UI (`view.dart`)
-The UI uses `ViewModelBuilder.reactive` to bind the `SensorViewModel` to the View.
-- **Dependency Injection**: In a production app, use `get_it`. Here we instantiate `SensorViewModel(SensorRepository())` directly in `viewModelBuilder`.
-- **Widgets**: `Card` widgets display the X, Y, Z (and P) values for each sensor.
+The UI is built using `ViewModelBuilder.reactive` for a responsive experience.
+- **Sensor Cards**: Custom `_buildSensorCard` widgets display data or an error state.
+- **Visual Feedback**:
+    - **Unavailable State**: Cards turn grey, show a red error icon, and display "Sensor not supported".
+    - **Information Tooltips**: Each card includes an info icon that reveals usage instructions on tap.
+- **Dynamic Formatting**: Values are formatted to 2 decimal places for consistency.
 
 ## 4. Testing
 
-We use `flutter_test` and `mocktail` for unit testing.
+We use `flutter_test` and `mocktail` for unit testing the logic in `SensorViewModel`.
 
-### `sensor_viewmodel_test.dart`
-- Mocks `SensorRepository`.
-- Tests that the initial state is empty.
-- Tests that the ViewModel correctly updates its state properties when the Repository yields new sensor events.
-- Uses `DateTime.now()` for the timestamp requirement in sensor events.
+### Key Test Scenarios:
+1.  **Initial State**: Verify all sensor events are null.
+2.  **Data Updates**: Verify ViewModel state updates when the repository emits a new event.
+3.  **Availability Tracking**: Verify availability flags set to `false` when a stream errors out.
 
 ```dart
-// Example test case
-test('updates userAccelerometerEvent when repository emits event', () async {
-  final event = UserAccelerometerEvent(1, 2, 3, DateTime.now());
+test('sets availability to false when repository stream emits error', () async {
   when(() => mockRepository.userAccelerometerEvents).thenAnswer(
-    (_) => Stream.value(event),
+    (_) => Stream.error(Exception('Sensor not supported')),
   );
 
   final viewModel = SensorViewModel(mockRepository);
-  await Future.delayed(Duration.zero); // Wait for listener
+  await Future.delayed(Duration.zero);
   
-  expect(viewModel.userAccelerometerEvent, equals(event));
+  expect(viewModel.isUserAccelerometerAvailable, isFalse);
 });
 ```
