@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:raya_explore_feature/features/battery_and_charging_status/logic/battery_repository.dart';
 import 'package:raya_explore_feature/features/battery_and_charging_status/logic/battery_viewmodel.dart';
@@ -13,6 +14,7 @@ void main() {
   late BatteryViewModel viewModel;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
     mockBattery = MockBattery();
     repository = BatteryRepository(battery: mockBattery);
 
@@ -22,6 +24,22 @@ void main() {
     when(
       () => mockBattery.onBatteryStateChanged,
     ).thenAnswer((_) => Stream.fromIterable([BatteryState.discharging]));
+
+    // Mock the MethodChannel bridge
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(const MethodChannel('battery_bridge'), (
+          MethodCall methodCall,
+        ) async {
+          if (methodCall.method == 'getBatteryStatus') {
+            return <String, dynamic>{
+              'isCharging': false,
+              'isPlugged': false,
+              'isConnectedNotCharging': false,
+              'batteryLevel': 80,
+            };
+          }
+          return null;
+        });
   });
 
   group('BatteryViewModel Tests -', () {

@@ -31,9 +31,9 @@ class BatteryViewModel extends BaseViewModel with WidgetsBindingObserver {
 
       _batteryStateSubscription = _repository.onBatteryStateChanged.listen((
         state,
-      ) {
+      ) async {
         _batteryState = state;
-        _updateBatteryLevel();
+        await _updateBatteryLevel();
         notifyListeners();
       });
     } catch (e) {
@@ -46,6 +46,13 @@ class BatteryViewModel extends BaseViewModel with WidgetsBindingObserver {
 
   Future<void> _updateBatteryLevel() async {
     _batteryLevel = await _repository.batteryLevel;
+
+    // Check bridge for connected but not charging status
+    final status = await _repository.getGranularStatus();
+    if (status['isConnectedNotCharging'] == true) {
+      _batteryState = BatteryState.connectedNotCharging;
+    }
+
     notifyListeners();
   }
 

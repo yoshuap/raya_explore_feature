@@ -19,7 +19,7 @@ The **Battery and Charging Status** feature is a real-time monitor for device po
 - **Optimization**: Visibility into "Battery Save Mode" helps users understand why their device might be throttling performance or background tasks.
 
 ## How to Implement This Feature
-This feature is implemented using the **Stacked Architecture** and the `battery_plus` package.
+This feature is implemented using the **Stacked Architecture**, the `battery_plus` package, and a custom **MethodChannel** bridge for Android.
 
 ### 1. Add Dependency
 Add the following to your `pubspec.yaml`:
@@ -28,17 +28,23 @@ dependencies:
   battery_plus: ^any
 ```
 
-### 2. Battery Repository
-The `BatteryRepository` abstracts the `battery_plus` plugin, providing methods to fetch levels and states.
+### 2. Native Bridge (Android)
+To detect the "Connected Not Charging" state on Android, we use a `MethodChannel` named `battery_bridge` in `MainActivity.kt`. It retrieves granular battery status using `Intent.ACTION_BATTERY_CHANGED`.
 
-### 3. Battery ViewModel
-The `BatteryViewModel` (extending `BaseViewModel`) manages the lifecycle of the battery state:
-- Subscribes to `onBatteryStateChanged` stream.
-- Updates battery level whenever the state changes.
-- Reacts to app life-cycle (resumed) to refresh status.
+### 3. Battery Repository
+The `BatteryRepository` abstracts the `battery_plus` plugin and the `MethodChannel`.
+- `batteryLevel`: Fetches current level via plugin.
+- `onBatteryStateChanged`: Streams plugin state changes.
+- `getGranularStatus()`: Invokes the native bridge to check specifically for the `isConnectedNotCharging` flag.
 
-### 4. Battery View
+### 4. Battery ViewModel
+The `BatteryViewModel` (extending `BaseViewModel`) manages the lifecycle:
+- Subscribes to `onBatteryStateChanged`.
+- Calls `_updateBatteryLevel()` on state changes.
+- Within `_updateBatteryLevel()`, it queries the bridge. If the native status indicates "connected not charging", it overrides the default plugin state with `BatteryState.connectedNotCharging`.
+
+### 5. Battery View
 The UI uses `ViewModelBuilder<BatteryViewModel>.reactive` to:
-- Display a dynamic battery icon based on charging state and level.
+- Display a dynamic battery icon.
 - Show the current percentage.
-- List details like Save Mode and Last Updated time.
+- Handle the `connectedNotCharging` state by showing the "Plugged in, not charging" label.
