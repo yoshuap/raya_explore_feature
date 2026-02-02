@@ -1,18 +1,44 @@
 # Battery and Charging Status
 
-## Use Case
-This feature is designed for users who need to monitor their device's battery health and charging status in real-time. It provides critical information about the battery's current percentage and whether the device is currently charging, discharging, full, or in another state.
+## What is
+The **Battery and Charging Status** feature is a real-time monitor for device power information. It retrieves and displays the current battery level, state (charging, discharging, full), and battery save mode status, providing users with essential visibility into their device's energy health.
 
-## Purpose
-The primary purpose of this feature is to:
-- **Monitor Battery Level**: Give users an accurate and real-time view of their battery percentage.
-- **Track Charging State**: Inform users if their device is successfully charging when plugged in.
-- **Enhance User Awareness**: Help users manage their device's power usage by providing clear status indicators.
+## Key Metrics Captured
+- **Battery Level**: Expressed as a percentage (0-100%).
+- **Battery State**: 
+  - `Charging`: Device is connected to power and increasing level.
+  - `Discharging`: Device is running on battery and decreasing level.
+  - `Full`: Device is connected to power and has reached maximum capacity.
+  - `Connected Not Charging`: Device is plugged in but not receiving charge.
+  - `Unknown`: State cannot be determined.
+- **Battery Save Mode**: Boolean status indicating if the device is in a low-power saving state.
 
-## Implementation Details
-- **Architecture**: Stacked Architecture
-- **Dependency**: `battery_plus` package
-- **Components**:
-    - `BatteryRepository`: Handles the interaction with the `battery_plus` plugin.
-    - `BatteryViewModel`: Manages the state and logic for the battery status.
-    - `BatteryAndChargingStatus` (View): Displays the battery information to the user.
+## Why This Feature Matters
+- **Awareness**: Users need to know when their device is low on power to avoid unexpected shutdowns.
+- **Verification**: Confirms that chargers/cables are functioning correctly by showing the "Charging" state.
+- **Optimization**: Visibility into "Battery Save Mode" helps users understand why their device might be throttling performance or background tasks.
+
+## How to Implement This Feature
+This feature is implemented using the **Stacked Architecture** and the `battery_plus` package.
+
+### 1. Add Dependency
+Add the following to your `pubspec.yaml`:
+```yaml
+dependencies:
+  battery_plus: ^any
+```
+
+### 2. Battery Repository
+The `BatteryRepository` abstracts the `battery_plus` plugin, providing methods to fetch levels and states.
+
+### 3. Battery ViewModel
+The `BatteryViewModel` (extending `BaseViewModel`) manages the lifecycle of the battery state:
+- Subscribes to `onBatteryStateChanged` stream.
+- Updates battery level whenever the state changes.
+- Reacts to app life-cycle (resumed) to refresh status.
+
+### 4. Battery View
+The UI uses `ViewModelBuilder<BatteryViewModel>.reactive` to:
+- Display a dynamic battery icon based on charging state and level.
+- Show the current percentage.
+- List details like Save Mode and Last Updated time.
