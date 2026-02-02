@@ -29,3 +29,7 @@ flutter:
 
   assets:
     - lib/features/touch_dynamics/docs.md
+    - lib/features/akselometer_and_giroskop/docs.md
+    - lib/features/battery_and_charging_status/docs.md
+    - lib/features/data_device/docs.md
+    - lib/features/keystroke_dynamics/docs.md

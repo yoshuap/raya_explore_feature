@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:raya_explore_feature/features/data_device/logic/device_info_repository.dart';
 import 'package:raya_explore_feature/features/data_device/logic/device_info_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -8,21 +10,49 @@ class DataDevice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<DeviceInfoViewModel>.reactive(
-      viewModelBuilder: () => DeviceInfoViewModel(DeviceInfoRepository()),
-      builder: (context, viewModel, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Data Device'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: viewModel.refresh,
+    return DefaultTabController(
+      length: 2,
+      child: ViewModelBuilder<DeviceInfoViewModel>.reactive(
+        viewModelBuilder: () => DeviceInfoViewModel(DeviceInfoRepository()),
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Data Device'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: viewModel.refresh,
+                ),
+              ],
+              bottom: const TabBar(
+                tabs: [
+                  Tab(text: 'Feature', icon: Icon(Icons.info_outline)),
+                  Tab(text: 'Docs', icon: Icon(Icons.description)),
+                ],
               ),
-            ],
-          ),
-          body: SafeArea(child: _buildBody(viewModel)),
-        );
+            ),
+            body: SafeArea(
+              child: TabBarView(
+                children: [_buildBody(viewModel), _buildDocsTab()],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDocsTab() {
+    return FutureBuilder<String>(
+      future: rootBundle.loadString('lib/features/data_device/docs.md'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error loading docs: ${snapshot.error}'));
+        }
+        return Markdown(data: snapshot.data ?? 'No documentation available.');
       },
     );
   }

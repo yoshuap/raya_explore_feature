@@ -1,5 +1,7 @@
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:raya_explore_feature/features/battery_and_charging_status/logic/battery_repository.dart';
 import 'package:raya_explore_feature/features/battery_and_charging_status/logic/battery_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -9,26 +11,59 @@ class BatteryAndChargingStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<BatteryViewModel>.reactive(
-      viewModelBuilder: () => BatteryViewModel(BatteryRepository()),
-      builder: (context, viewModel, child) {
-        return Scaffold(
-          appBar: AppBar(title: const Text('Battery and Charging Status')),
-          body: viewModel.isBusy
-              ? const Center(child: CircularProgressIndicator())
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        _buildBatteryCard(viewModel),
-                        const SizedBox(height: 24),
-                        _buildDetailsCard(context, viewModel),
-                      ],
-                    ),
-                  ),
-                ),
-        );
+    return DefaultTabController(
+      length: 2,
+      child: ViewModelBuilder<BatteryViewModel>.reactive(
+        viewModelBuilder: () => BatteryViewModel(BatteryRepository()),
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Battery and Charging Status'),
+              bottom: const TabBar(
+                tabs: [
+                  Tab(text: 'Feature', icon: Icon(Icons.bolt)),
+                  Tab(text: 'Docs', icon: Icon(Icons.description)),
+                ],
+              ),
+            ),
+            body: SafeArea(
+              child: TabBarView(
+                children: [
+                  viewModel.isBusy
+                      ? const Center(child: CircularProgressIndicator())
+                      : SingleChildScrollView(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              _buildBatteryCard(viewModel),
+                              const SizedBox(height: 24),
+                              _buildDetailsCard(context, viewModel),
+                            ],
+                          ),
+                        ),
+                  _buildDocsTab(),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDocsTab() {
+    return FutureBuilder<String>(
+      future: rootBundle.loadString(
+        'lib/features/battery_and_charging_status/docs.md',
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error loading docs: ${snapshot.error}'));
+        }
+        return Markdown(data: snapshot.data ?? 'No documentation available.');
       },
     );
   }

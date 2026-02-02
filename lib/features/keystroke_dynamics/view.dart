@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:raya_explore_feature/features/keystroke_dynamics/logic/keystroke_model.dart';
 import 'package:raya_explore_feature/features/keystroke_dynamics/logic/keystroke_repository.dart';
 import 'package:raya_explore_feature/features/keystroke_dynamics/logic/keystroke_viewmodel.dart';
@@ -9,38 +11,67 @@ class KeystrokeDynamics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder<KeystrokeViewModel>.reactive(
-      viewModelBuilder: () => KeystrokeViewModel(KeystrokeRepository()),
-      builder: (context, viewModel, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Keystroke Dynamics'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: viewModel.clearData,
-                tooltip: 'Clear Data',
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildInfoCard(),
-                  const SizedBox(height: 16),
-                  _buildInputCard(viewModel),
-                  const SizedBox(height: 16),
-                  _buildControlButtons(viewModel),
-                  const SizedBox(height: 24),
-                  _buildAnalysisSection(context, viewModel),
+    return DefaultTabController(
+      length: 2,
+      child: ViewModelBuilder<KeystrokeViewModel>.reactive(
+        viewModelBuilder: () => KeystrokeViewModel(KeystrokeRepository()),
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Keystroke Dynamics'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: viewModel.clearData,
+                  tooltip: 'Clear Data',
+                ),
+              ],
+              bottom: const TabBar(
+                tabs: [
+                  Tab(text: 'Feature', icon: Icon(Icons.keyboard)),
+                  Tab(text: 'Docs', icon: Icon(Icons.description)),
                 ],
               ),
             ),
-          ),
-        );
+            body: SafeArea(
+              child: TabBarView(
+                children: [
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildInfoCard(),
+                        const SizedBox(height: 16),
+                        _buildInputCard(viewModel),
+                        const SizedBox(height: 16),
+                        _buildControlButtons(viewModel),
+                        const SizedBox(height: 24),
+                        _buildAnalysisSection(context, viewModel),
+                      ],
+                    ),
+                  ),
+                  _buildDocsTab(),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDocsTab() {
+    return FutureBuilder<String>(
+      future: rootBundle.loadString('lib/features/keystroke_dynamics/docs.md'),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error loading docs: ${snapshot.error}'));
+        }
+        return Markdown(data: snapshot.data ?? 'No documentation available.');
       },
     );
   }
