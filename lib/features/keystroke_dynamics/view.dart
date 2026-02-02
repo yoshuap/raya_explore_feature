@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:raya_explore_feature/features/keystroke_dynamics/logic/keystroke_model.dart';
 import 'package:raya_explore_feature/features/keystroke_dynamics/logic/keystroke_repository.dart';
 import 'package:raya_explore_feature/features/keystroke_dynamics/logic/keystroke_viewmodel.dart';
 import 'package:stacked/stacked.dart';
@@ -218,6 +219,7 @@ class KeystrokeDynamics extends StatelessWidget {
               'Key "A" pressed for 90 ms\nKey "B" pressed for 110 ms\n➡️ Average dwell time = 100 ms',
           whyItMatters:
               '• Humans → varied dwell times\n• Bots/scripts → very consistent dwell times\n• Nervous or careful users → longer dwell times',
+          interpretation: analysis.dwellInterpretation,
         ),
         const SizedBox(height: 12),
         _buildMetricCard(
@@ -232,6 +234,7 @@ class KeystrokeDynamics extends StatelessWidget {
           example: 'Release "A"\nPress "B" after 70 ms\n➡️ Flight time = 70 ms',
           whyItMatters:
               '• Humans pause inconsistently\n• Bots type with near-perfect timing\n• Reflects natural typing rhythm',
+          interpretation: analysis.flightInterpretation,
         ),
         const SizedBox(height: 12),
         _buildMetricCard(
@@ -246,6 +249,7 @@ class KeystrokeDynamics extends StatelessWidget {
           example: '10 characters in 5 seconds\n➡️ (10 / 5) × 60 = 120 CPM',
           whyItMatters:
               '• Extremely high CPM → bot/autofill/paste\n• Very low CPM → hesitation or difficulty\n• Normal humans fall in a realistic range (40-80 CPM typical)',
+          interpretation: analysis.speedInterpretation,
         ),
         const SizedBox(height: 12),
         _buildMetricCard(
@@ -306,80 +310,129 @@ class KeystrokeDynamics extends StatelessWidget {
     String? explanation,
     String? example,
     String? whyItMatters,
+    KeystrokeInterpretation? interpretation,
   }) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: explanation != null
+            ? () => _showMetricExplanation(
+                context,
+                title,
+                explanation,
+                example,
+                whyItMatters,
+                color,
+                interpretation,
+              )
+            : null,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 28),
               ),
-              child: Icon(icon, color: color, size: 28),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      if (explanation != null)
-                        IconButton(
-                          icon: Icon(
-                            Icons.info_outline,
-                            size: 20,
-                            color: color,
-                          ),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () => _showMetricExplanation(
-                            context,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
                             title,
-                            explanation,
-                            example,
-                            whyItMatters,
-                            color,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
                           ),
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                ],
+                        if (interpretation != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _getInterpretationColor(
+                                interpretation.color,
+                              ).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                color: _getInterpretationColor(
+                                  interpretation.color,
+                                ).withValues(alpha: 0.5),
+                              ),
+                            ),
+                            child: Text(
+                              interpretation.label,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: _getInterpretationColor(
+                                  interpretation.color,
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (explanation != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Icon(
+                              Icons.info_outline,
+                              size: 16,
+                              color: color.withValues(alpha: 0.5),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
+              const SizedBox(width: 8),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Color _getInterpretationColor(String colorName) {
+    switch (colorName) {
+      case KeystrokeInterpretation.colorGreen:
+        return Colors.green;
+      case KeystrokeInterpretation.colorOrange:
+        return Colors.orange;
+      case KeystrokeInterpretation.colorRed:
+        return Colors.red;
+      case KeystrokeInterpretation.colorBlue:
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
   }
 
   void _showMetricExplanation(
@@ -389,6 +442,7 @@ class KeystrokeDynamics extends StatelessWidget {
     String? example,
     String? whyItMatters,
     Color color,
+    KeystrokeInterpretation? interpretation,
   ) {
     showDialog(
       context: context,
@@ -407,6 +461,47 @@ class KeystrokeDynamics extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (interpretation != null) ...[
+                const Text(
+                  'Current Interpretation:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _getInterpretationColor(
+                      interpretation.color,
+                    ).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: _getInterpretationColor(
+                        interpretation.color,
+                      ).withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        interpretation.label,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: _getInterpretationColor(interpretation.color),
+                        ),
+                      ),
+                      if (interpretation.description != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          interpretation.description!,
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
               const Text(
                 'What it means:',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),

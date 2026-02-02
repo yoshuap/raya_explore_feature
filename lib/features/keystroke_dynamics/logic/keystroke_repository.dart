@@ -61,6 +61,11 @@ class KeystrokeRepository {
       }
     }
 
+    // Generate interpretations
+    final dwellInterpretation = _interpretDwellConsistency(dwellStdDev);
+    final flightInterpretation = _interpretFlightConsistency(flightStdDev);
+    final speedInterpretation = _interpretTypingSpeed(typingSpeed);
+
     return KeystrokeAnalysis(
       averageDwellTime: avgDwellTime,
       averageFlightTime: avgFlightTime,
@@ -68,7 +73,86 @@ class KeystrokeRepository {
       totalKeystrokes: _events.length,
       dwellTimeStdDev: dwellStdDev,
       flightTimeStdDev: flightStdDev,
+      dwellInterpretation: dwellInterpretation,
+      flightInterpretation: flightInterpretation,
+      speedInterpretation: speedInterpretation,
     );
+  }
+
+  KeystrokeInterpretation? _interpretDwellConsistency(double stdDev) {
+    if (stdDev == 0 && _events.length < 3) return null;
+    if (stdDev < 5) {
+      return const KeystrokeInterpretation(
+        label: 'Suspiciously Consistent',
+        color: KeystrokeInterpretation.colorRed,
+        description:
+            'Key hold durations are nearly identical, which is common in bots or automated scripts.',
+      );
+    } else if (stdDev < 15) {
+      return const KeystrokeInterpretation(
+        label: 'Very Consistent',
+        color: KeystrokeInterpretation.colorOrange,
+        description:
+            'Highly consistent key presses. Typical for very skilled typists or specific rhythmic patterns.',
+      );
+    } else {
+      return const KeystrokeInterpretation(
+        label: 'Natural Variation',
+        color: KeystrokeInterpretation.colorGreen,
+        description: 'Normal human variation in key hold duration.',
+      );
+    }
+  }
+
+  KeystrokeInterpretation? _interpretFlightConsistency(double stdDev) {
+    if (stdDev == 0 && _events.length < 3) return null;
+    if (stdDev < 10) {
+      return const KeystrokeInterpretation(
+        label: 'Robotic Rhythm',
+        color: KeystrokeInterpretation.colorRed,
+        description:
+            'The gaps between keystrokes are too uniform. This is a strong indicator of non-human input.',
+      );
+    } else if (stdDev < 30) {
+      return const KeystrokeInterpretation(
+        label: 'Highly Rhythmic',
+        color: KeystrokeInterpretation.colorOrange,
+        description:
+            'Very steady typing pace. Often seen in professional typists or memorized patterns.',
+      );
+    } else {
+      return const KeystrokeInterpretation(
+        label: 'Natural Rhythm',
+        color: KeystrokeInterpretation.colorGreen,
+        description:
+            'Varied pauses between keys, indicating natural human typing behavior.',
+      );
+    }
+  }
+
+  KeystrokeInterpretation? _interpretTypingSpeed(double cpm) {
+    if (cpm == 0) return null;
+    if (cpm > 800) {
+      return const KeystrokeInterpretation(
+        label: 'Supersonic (Bot-like)',
+        color: KeystrokeInterpretation.colorRed,
+        description:
+            'Typing speed exceeds realistic human limits (>800 CPM). Likely automated input.',
+      );
+    } else if (cpm > 500) {
+      return const KeystrokeInterpretation(
+        label: 'Elite Speed',
+        color: KeystrokeInterpretation.colorOrange,
+        description:
+            'Extremely fast typing. Rare for most users, potentially automated or highly trained.',
+      );
+    } else {
+      return const KeystrokeInterpretation(
+        label: 'Human Speed',
+        color: KeystrokeInterpretation.colorGreen,
+        description: 'Typing speed within the normal human range.',
+      );
+    }
   }
 
   /// Clears all recorded keystroke data

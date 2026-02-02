@@ -24,6 +24,33 @@ class KeystrokeEvent {
   }
 }
 
+/// Represents an interpretation of a keystroke metric.
+class KeystrokeInterpretation {
+  /// The interpretation text (e.g., "Human-like", "Suspiciously Consistent")
+  final String label;
+
+  /// The interpretation color for UI feedback
+  final String color;
+
+  /// Detailed description of the interpretation
+  final String? description;
+
+  const KeystrokeInterpretation({
+    required this.label,
+    required this.color,
+    this.description,
+  });
+
+  /// Potential colors for interpretations
+  static const String colorGreen = 'green';
+  static const String colorOrange = 'orange';
+  static const String colorRed = 'red';
+  static const String colorBlue = 'blue';
+
+  @override
+  String toString() => 'KeystrokeInterpretation(label: $label)';
+}
+
 /// Represents aggregated analysis of keystroke patterns.
 class KeystrokeAnalysis {
   /// Average time a key is held down (dwell time) in milliseconds
@@ -44,6 +71,15 @@ class KeystrokeAnalysis {
   /// Standard deviation of flight times
   final double flightTimeStdDev;
 
+  /// Interpretation for dwell time
+  final KeystrokeInterpretation? dwellInterpretation;
+
+  /// Interpretation for flight time
+  final KeystrokeInterpretation? flightInterpretation;
+
+  /// Interpretation for typing speed
+  final KeystrokeInterpretation? speedInterpretation;
+
   const KeystrokeAnalysis({
     required this.averageDwellTime,
     required this.averageFlightTime,
@@ -51,6 +87,9 @@ class KeystrokeAnalysis {
     required this.totalKeystrokes,
     required this.dwellTimeStdDev,
     required this.flightTimeStdDev,
+    this.dwellInterpretation,
+    this.flightInterpretation,
+    this.speedInterpretation,
   });
 
   /// Creates an empty analysis with zero values
@@ -62,6 +101,9 @@ class KeystrokeAnalysis {
       totalKeystrokes: 0,
       dwellTimeStdDev: 0,
       flightTimeStdDev: 0,
+      dwellInterpretation: null,
+      flightInterpretation: null,
+      speedInterpretation: null,
     );
   }
 
