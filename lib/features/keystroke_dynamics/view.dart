@@ -23,19 +23,21 @@ class KeystrokeDynamics extends StatelessWidget {
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildInfoCard(),
-                const SizedBox(height: 16),
-                _buildInputCard(viewModel),
-                const SizedBox(height: 16),
-                _buildControlButtons(viewModel),
-                const SizedBox(height: 24),
-                _buildAnalysisSection(context, viewModel),
-              ],
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildInfoCard(),
+                  const SizedBox(height: 16),
+                  _buildInputCard(viewModel),
+                  const SizedBox(height: 16),
+                  _buildControlButtons(viewModel),
+                  const SizedBox(height: 24),
+                  _buildAnalysisSection(context, viewModel),
+                ],
+              ),
             ),
           ),
         );

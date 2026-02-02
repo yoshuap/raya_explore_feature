@@ -21,7 +21,7 @@ class DataDevice extends StatelessWidget {
               ),
             ],
           ),
-          body: _buildBody(viewModel),
+          body: SafeArea(child: _buildBody(viewModel)),
         );
       },
     );

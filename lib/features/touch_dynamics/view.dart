@@ -24,11 +24,13 @@ class TouchDynamics extends StatelessWidget {
               ],
             ),
           ),
-          body: TabBarView(
-            children: [
-              _TouchExplorer(viewModel: viewModel),
-              const _TouchDocs(),
-            ],
+          body: SafeArea(
+            child: TabBarView(
+              children: [
+                _TouchExplorer(viewModel: viewModel),
+                const _TouchDocs(),
+              ],
+            ),
           ),
         ),
       ),

@@ -16,110 +16,112 @@ class AkselometerAndGiroskop extends StatelessWidget {
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(title: const Text('Akselometer and Giroskop')),
-          body: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              _buildSensorCard(
-                context,
-                title: 'User Accelerometer',
-                data: viewModel.userAccelerometerEvent != null
-                    ? 'X: ${viewModel.userAccelerometerEvent!.x.toStringAsFixed(2)}\n'
-                          'Y: ${viewModel.userAccelerometerEvent!.y.toStringAsFixed(2)}\n'
-                          'Z: ${viewModel.userAccelerometerEvent!.z.toStringAsFixed(2)}'
-                    : 'No data',
-                isAvailable: viewModel.isUserAccelerometerAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Accelerometer',
-                data: viewModel.accelerometerEvent != null
-                    ? 'X: ${viewModel.accelerometerEvent!.x.toStringAsFixed(2)}\n'
-                          'Y: ${viewModel.accelerometerEvent!.y.toStringAsFixed(2)}\n'
-                          'Z: ${viewModel.accelerometerEvent!.z.toStringAsFixed(2)}'
-                    : 'No data',
-                isAvailable: viewModel.isAccelerometerAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Gyroscope',
-                data: viewModel.gyroscopeEvent != null
-                    ? 'X: ${viewModel.gyroscopeEvent!.x.toStringAsFixed(2)}\n'
-                          'Y: ${viewModel.gyroscopeEvent!.y.toStringAsFixed(2)}\n'
-                          'Z: ${viewModel.gyroscopeEvent!.z.toStringAsFixed(2)}'
-                    : 'No data',
-                isAvailable: viewModel.isGyroscopeAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Magnetometer',
-                data: viewModel.magnetometerEvent != null
-                    ? 'X: ${viewModel.magnetometerEvent!.x.toStringAsFixed(2)}\n'
-                          'Y: ${viewModel.magnetometerEvent!.y.toStringAsFixed(2)}\n'
-                          'Z: ${viewModel.magnetometerEvent!.z.toStringAsFixed(2)}'
-                    : 'No data',
-                isAvailable: viewModel.isMagnetometerAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Barometer',
-                data: viewModel.barometerEvent != null
-                    ? 'Pressure: ${viewModel.barometerEvent!.pressure.toStringAsFixed(2)} hPa'
-                    : 'No data',
-                isAvailable: viewModel.isBarometerAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Ambient Temperature',
-                data: viewModel.temperatureEvent != null
-                    ? '${viewModel.temperatureEvent!.toStringAsFixed(2)} °C'
-                    : 'No data',
-                isAvailable: viewModel.isTemperatureAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Proximity',
-                data: viewModel.proximityEvent != null
-                    ? viewModel.proximityEvent == 0
-                          ? "Far"
-                          : "Near"
-                    : 'No data',
-                isAvailable: viewModel.isProximityAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Light',
-                data: viewModel.lightEvent != null
-                    ? '${viewModel.lightEvent!.toStringAsFixed(2)} Lux'
-                    : 'No data',
-                isAvailable: viewModel.isLightAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-              _buildSensorCard(
-                context,
-                title: 'Relative Humidity',
-                data: viewModel.humidityEvent != null
-                    ? '${viewModel.humidityEvent!.toStringAsFixed(2)} %'
-                    : 'No data',
-                isAvailable: viewModel.isHumidityAvailable,
-                textGuide:
-                    'Hold the device still and move it around to see the values change.',
-              ),
-            ],
+          body: SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                _buildSensorCard(
+                  context,
+                  title: 'User Accelerometer',
+                  data: viewModel.userAccelerometerEvent != null
+                      ? 'X: ${viewModel.userAccelerometerEvent!.x.toStringAsFixed(2)}\n'
+                            'Y: ${viewModel.userAccelerometerEvent!.y.toStringAsFixed(2)}\n'
+                            'Z: ${viewModel.userAccelerometerEvent!.z.toStringAsFixed(2)}'
+                      : 'No data',
+                  isAvailable: viewModel.isUserAccelerometerAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Accelerometer',
+                  data: viewModel.accelerometerEvent != null
+                      ? 'X: ${viewModel.accelerometerEvent!.x.toStringAsFixed(2)}\n'
+                            'Y: ${viewModel.accelerometerEvent!.y.toStringAsFixed(2)}\n'
+                            'Z: ${viewModel.accelerometerEvent!.z.toStringAsFixed(2)}'
+                      : 'No data',
+                  isAvailable: viewModel.isAccelerometerAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Gyroscope',
+                  data: viewModel.gyroscopeEvent != null
+                      ? 'X: ${viewModel.gyroscopeEvent!.x.toStringAsFixed(2)}\n'
+                            'Y: ${viewModel.gyroscopeEvent!.y.toStringAsFixed(2)}\n'
+                            'Z: ${viewModel.gyroscopeEvent!.z.toStringAsFixed(2)}'
+                      : 'No data',
+                  isAvailable: viewModel.isGyroscopeAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Magnetometer',
+                  data: viewModel.magnetometerEvent != null
+                      ? 'X: ${viewModel.magnetometerEvent!.x.toStringAsFixed(2)}\n'
+                            'Y: ${viewModel.magnetometerEvent!.y.toStringAsFixed(2)}\n'
+                            'Z: ${viewModel.magnetometerEvent!.z.toStringAsFixed(2)}'
+                      : 'No data',
+                  isAvailable: viewModel.isMagnetometerAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Barometer',
+                  data: viewModel.barometerEvent != null
+                      ? 'Pressure: ${viewModel.barometerEvent!.pressure.toStringAsFixed(2)} hPa'
+                      : 'No data',
+                  isAvailable: viewModel.isBarometerAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Ambient Temperature',
+                  data: viewModel.temperatureEvent != null
+                      ? '${viewModel.temperatureEvent!.toStringAsFixed(2)} °C'
+                      : 'No data',
+                  isAvailable: viewModel.isTemperatureAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Proximity',
+                  data: viewModel.proximityEvent != null
+                      ? viewModel.proximityEvent == 0
+                            ? "Far"
+                            : "Near"
+                      : 'No data',
+                  isAvailable: viewModel.isProximityAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Light',
+                  data: viewModel.lightEvent != null
+                      ? '${viewModel.lightEvent!.toStringAsFixed(2)} Lux'
+                      : 'No data',
+                  isAvailable: viewModel.isLightAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+                _buildSensorCard(
+                  context,
+                  title: 'Relative Humidity',
+                  data: viewModel.humidityEvent != null
+                      ? '${viewModel.humidityEvent!.toStringAsFixed(2)} %'
+                      : 'No data',
+                  isAvailable: viewModel.isHumidityAvailable,
+                  textGuide:
+                      'Hold the device still and move it around to see the values change.',
+                ),
+              ],
+            ),
           ),
         );
       },

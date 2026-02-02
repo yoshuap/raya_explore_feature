@@ -16,14 +16,16 @@ class BatteryAndChargingStatus extends StatelessWidget {
           appBar: AppBar(title: const Text('Battery and Charging Status')),
           body: viewModel.isBusy
               ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      _buildBatteryCard(viewModel),
-                      const SizedBox(height: 24),
-                      _buildDetailsCard(context, viewModel),
-                    ],
+              : SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        _buildBatteryCard(viewModel),
+                        const SizedBox(height: 24),
+                        _buildDetailsCard(context, viewModel),
+                      ],
+                    ),
                   ),
                 ),
         );
