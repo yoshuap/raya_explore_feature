@@ -41,6 +41,10 @@ class MainActivity : FlutterActivity() {
             BatteryManager.EXTRA_LEVEL, -1
         ) ?: -1
 
+        val health = batteryStatus?.getIntExtra(
+            BatteryManager.EXTRA_HEALTH, -1
+        ) ?: -1
+
         val isPlugged = plugged > 0
 
         // In Android, BATTERY_STATUS_NOT_CHARGING or BATTERY_STATUS_DISCHARGING 
@@ -50,11 +54,22 @@ class MainActivity : FlutterActivity() {
 
         val isConnectedNotCharging = isPlugged && !isCharging
 
+        val healthStatus = when (health) {
+            BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
+            BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
+            BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
+            BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
+            BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Unspecified Failure"
+            BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
+            else -> "Unknown"
+        }
+
         return hashMapOf(
             "isCharging" to isCharging,
             "isPlugged" to isPlugged,
             "isConnectedNotCharging" to isConnectedNotCharging,
-            "batteryLevel" to level
+            "batteryLevel" to level,
+            "batteryHealth" to healthStatus
         )
     }
 }

@@ -108,6 +108,13 @@ class BatteryAndChargingStatus extends StatelessWidget {
             ),
             const Divider(),
             _buildDetailRow(
+              'Battery Health',
+              viewModel.batteryHealth ?? 'Unknown',
+              Icons.health_and_safety,
+              Colors.redAccent,
+            ),
+            const Divider(),
+            _buildDetailRow(
               'Last Updated',
               TimeOfDay.now().format(context),
               Icons.update,

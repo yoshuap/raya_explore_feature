@@ -21,6 +21,9 @@ class BatteryViewModel extends BaseViewModel with WidgetsBindingObserver {
   bool _isBatterySaveMode = false;
   bool get isBatterySaveMode => _isBatterySaveMode;
 
+  String? _batteryHealth;
+  String? get batteryHealth => _batteryHealth;
+
   StreamSubscription<BatteryState>? _batteryStateSubscription;
 
   Future<void> _init() async {
@@ -47,11 +50,13 @@ class BatteryViewModel extends BaseViewModel with WidgetsBindingObserver {
   Future<void> _updateBatteryLevel() async {
     _batteryLevel = await _repository.batteryLevel;
 
-    // Check bridge for connected but not charging status
+    // Check bridge for connected but not charging status and health
     final status = await _repository.getGranularStatus();
     if (status['isConnectedNotCharging'] == true) {
       _batteryState = BatteryState.connectedNotCharging;
     }
+
+    _batteryHealth = status['batteryHealth'] as String?;
 
     notifyListeners();
   }

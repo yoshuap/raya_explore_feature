@@ -36,6 +36,7 @@ void main() {
               'isPlugged': false,
               'isConnectedNotCharging': false,
               'batteryLevel': 80,
+              'batteryHealth': 'Good',
             };
           }
           return null;
@@ -43,16 +44,20 @@ void main() {
   });
 
   group('BatteryViewModel Tests -', () {
-    test('Initial battery level and save mode are set correctly', () async {
-      viewModel = BatteryViewModel(repository);
+    test(
+      'Initial battery level, save mode, and health are set correctly',
+      () async {
+        viewModel = BatteryViewModel(repository);
 
-      // Wait for initialization
-      await Future.delayed(Duration.zero);
+        // Wait for initialization
+        await Future.delayed(Duration.zero);
 
-      expect(viewModel.batteryLevel, 80);
-      expect(viewModel.isBatterySaveMode, false);
-      expect(viewModel.batteryState, BatteryState.discharging);
-    });
+        expect(viewModel.batteryLevel, 80);
+        expect(viewModel.isBatterySaveMode, false);
+        expect(viewModel.batteryState, BatteryState.discharging);
+        expect(viewModel.batteryHealth, 'Good');
+      },
+    );
 
     test('Battery state changes update the view model', () async {
       final stateController = StreamController<BatteryState>();
