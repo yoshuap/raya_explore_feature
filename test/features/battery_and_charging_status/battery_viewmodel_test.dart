@@ -37,6 +37,8 @@ void main() {
               'isConnectedNotCharging': false,
               'batteryLevel': 80,
               'batteryHealth': 'Good',
+              'isUsbConnected': false,
+              'isUsbConfigured': true,
             };
           }
           return null;
@@ -45,7 +47,7 @@ void main() {
 
   group('BatteryViewModel Tests -', () {
     test(
-      'Initial battery level, save mode, and health are set correctly',
+      'Initial battery level, save mode, health, and usb status are set correctly',
       () async {
         viewModel = BatteryViewModel(repository);
 
@@ -56,6 +58,7 @@ void main() {
         expect(viewModel.isBatterySaveMode, false);
         expect(viewModel.batteryState, BatteryState.discharging);
         expect(viewModel.batteryHealth, 'Good');
+        expect(viewModel.isUsbDataConnected, true);
       },
     );
 

@@ -26,6 +26,7 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun getBatteryStatus(): HashMap<String, Any> {
+        // Battery status
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         val batteryStatus = registerReceiver(null, intentFilter)
 
@@ -44,6 +45,13 @@ class MainActivity : FlutterActivity() {
         val health = batteryStatus?.getIntExtra(
             BatteryManager.EXTRA_HEALTH, -1
         ) ?: -1
+
+        // USB status (using sticky broadcast "android.hardware.usb.action.USB_STATE")
+        val usbFilter = IntentFilter("android.hardware.usb.action.USB_STATE")
+        val usbStatus = registerReceiver(null, usbFilter)
+        
+        val isUsbConnected = usbStatus?.getBooleanExtra("connected", false) ?: false
+        val isUsbConfigured = usbStatus?.getBooleanExtra("configured", false) ?: false
 
         val isPlugged = plugged > 0
 
@@ -69,7 +77,9 @@ class MainActivity : FlutterActivity() {
             "isPlugged" to isPlugged,
             "isConnectedNotCharging" to isConnectedNotCharging,
             "batteryLevel" to level,
-            "batteryHealth" to healthStatus
+            "batteryHealth" to healthStatus,
+            "isUsbConnected" to isUsbConnected,
+            "isUsbConfigured" to isUsbConfigured
         )
     }
 }

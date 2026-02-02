@@ -12,6 +12,7 @@ The **Battery and Charging Status** feature is a real-time monitor for device po
   - `Connected Not Charging`: Device is plugged in but not receiving charge.
   - `Unknown`: State cannot be determined.
 - **Battery Health**: Current health condition (e.g., Good, Overheat, Dead).
+- **USB Data Link**: Boolean status indicating if an active data session is configured (e.g., connected to a PC).
 - **Battery Save Mode**: Boolean status indicating if the device is in a low-power saving state.
 
 ## Why This Feature Matters

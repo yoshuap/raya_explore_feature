@@ -115,6 +115,13 @@ class BatteryAndChargingStatus extends StatelessWidget {
             ),
             const Divider(),
             _buildDetailRow(
+              'USB Data Link',
+              viewModel.isUsbDataConnected ? 'Active' : 'Inactive',
+              Icons.usb,
+              viewModel.isUsbDataConnected ? Colors.blue : Colors.grey,
+            ),
+            const Divider(),
+            _buildDetailRow(
               'Last Updated',
               TimeOfDay.now().format(context),
               Icons.update,
