@@ -1,0 +1,46 @@
+PODS:
+  - battery_plus (1.0.0):
+    - Flutter
+  - device_info_plus (0.0.1):
+    - Flutter
+  - environment_sensors (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - proximity_sensor (0.0.1):
+    - Flutter
+  - sensors_plus (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - battery_plus (from `.symlinks/plugins/battery_plus/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
+  - environment_sensors (from `.symlinks/plugins/environment_sensors/ios`)
+  - Flutter (from `Flutter`)
+  - proximity_sensor (from `.symlinks/plugins/proximity_sensor/ios`)
+  - sensors_plus (from `.symlinks/plugins/sensors_plus/ios`)
+
+EXTERNAL SOURCES:
+  battery_plus:
+    :path: ".symlinks/plugins/battery_plus/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
+  environment_sensors:
+    :path: ".symlinks/plugins/environment_sensors/ios"
+  Flutter:
+    :path: Flutter
+  proximity_sensor:
+    :path: ".symlinks/plugins/proximity_sensor/ios"
+  sensors_plus:
+    :path: ".symlinks/plugins/sensors_plus/ios"
+
+SPEC CHECKSUMS:
+  battery_plus: b42253f6d2dde71712f8c36fef456d99121c5977
+  device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
+  environment_sensors: fb50ac03536e9249ae0edac59b37b0b5e2a6e9e6
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  proximity_sensor: 2aef59f90cf0382935faf58ad0a79e1e860773bd
+  sensors_plus: 6a11ed0c2e1d0bd0b20b4029d3bad27d96e0c65b
+
+PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
+
+COCOAPODS: 1.16.2
